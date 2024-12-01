@@ -1,26 +1,108 @@
-const mongoose=require('mongoose')
+const mongoose = require("mongoose");
+const validator = require("validator");
+const jwt=require('jsonwebtoken')
+const bcrypt=require('bcrypt')
+const userSchema = new mongoose.Schema(
+  {
+    firstName: {
+      type: String,
+      required: true,
+      minLength: 1,
+      maxlength: 30,
+      validate(value) {
+        if (!validator.isAlpha(value)) {
+          throw new Error("Invaid First Name");
+        }
+      },
+    },
+    lastName: {
+      type: String,
+      required: true,
+      minLength: 1,
+      maxlength: 30,
+      validate(value) {
+        if (!validator.isAlpha(value)) {
+          throw new Error("Invaid First Name");
+        }
+      },
+    },
+    username: {
+      type: String,
+      minLength: 1,
+      maxlength: 30,
+      unique: true,
+      required: true,
+    },
+    email: {
+      type: String,
+      unique: true,
+      required: true,
+      immutable: true,
+      minLength: 1,
+      maxlength: 30,
+      validate(value) {
+        if (!validator.isEmail(value)) {
+          throw new Error("Invalid Email Id");
+        }
+      },
+    },
+    password: {
+      type: String,
+      required: true,
+      validate(value) {
+        if (!validator.isStrongPassword(value)) {
+          throw new Error("Password is not Strong enough");
+        }
+      },
+    },
+    dob: {
+      type: Date,
+      required: true,
+      max: Date.now(),
+      validate(value) {
+        if (!(value instanceof Date) || isNaN(value)) {
+          throw new Error("Date is not valid");
+        }
+      },
+    },
+    age: {
+      type: Number,
+      min: 18,
+    },
+    gender: {
+      type: String,
+      required: true,
+      enum: ["Male", "Female", "Other"],
+    },
+    image: {
+      type: String,
+    },
+    about: {
+      type: String,
+      maxlength: 300,
+      default: "Hello I am",
+    },
+    skills: {
+      type: [String],
+      maxlength: 20,
+      validate(value) {
+        if (value.length > 10) {
+          throw new Error("Skill Limit Exceeded");
+        }
+      },
+    },
+  },
+  { timestamps: true }
+);
+userSchema.methods.getJWT=async function(){
+const token=jwt.sign({_id:this._id},"CODEswip#45")
+return token
+}
+userSchema.methods.validatePassword=async function(passwordInput){
+   const isValid=await bcrypt.compare(passwordInput,this.password)
+   return isValid
+}
 
-const userSchema=new mongoose.Schema({
-    firstName:{
-        type:String
-    },
-    lastName:{
-        type:String
-    },
-    email:{
-         type:String
-    },
-    password:{
-         type:String
-    },
-    dob:{
-        type:String
-    },
-    gender:{
-        type:String
-    }
+const userModel = mongoose.model("User", userSchema);
 
-})
-const userModel=mongoose.model("User",userSchema)
-
-module.exports=userModel
+module.exports = userModel;
