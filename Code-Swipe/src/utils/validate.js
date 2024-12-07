@@ -1,9 +1,22 @@
-
 const bcrypt=require('bcrypt')
+const jwt=require('jsonwebtoken')
+const validateAge=(dob)=>{
+   dob=new Date(dob)
+   const now=new Date()
+   let calculatedage=now.getFullYear()-dob.getFullYear()
+   const thisyear=new Date(now.getFullYear(),dob.getMonth(),dob.getDate())
 
-const validateSignupdata=async(req)=>{
-   const {password}=req.body
-   const passwordHash= await bcrypt.hash(password,15)
-   return passwordHash
+   if(now<thisyear){
+      calculatedage--
+    }
+
+    return calculatedage
+   
+   
 }
-module.exports= {validateSignupdata}
+const validateToken=(token)=>{
+   const isValid=jwt.verify(token,"CODEswip#45")
+   return isValid
+}
+
+module.exports= {validateAge,validateToken}

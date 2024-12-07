@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-const jwt=require('jsonwebtoken')
-const bcrypt=require('bcrypt')
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 const userSchema = new mongoose.Schema(
   {
     firstName: {
@@ -80,7 +80,9 @@ const userSchema = new mongoose.Schema(
     about: {
       type: String,
       maxlength: 300,
-      default: "Hello I am",
+      default: function () {
+        return this.about===""? `Hello I am ${this.firstName} ${this.lastName}`:this.about
+      },
     },
     skills: {
       type: [String],
@@ -94,14 +96,21 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-userSchema.methods.getJWT=async function(){
-const token=jwt.sign({_id:this._id},"CODEswip#45")
-return token
+
+userSchema.methods.setHashPassword=async function(){
+   this.password= await bcrypt.hash(this.password,15) 
 }
-userSchema.methods.validatePassword=async function(passwordInput){
-   const isValid=await bcrypt.compare(passwordInput,this.password)
-   return isValid
+
+userSchema.methods.validateHashPassword=async function(passwordInput){
+  const isValid=await bcrypt.compare(passwordInput,this.password)
+  return isValid
 }
+
+userSchema.methods.setJWT=function(){
+   const jwtToken= jwt.sign({_id:this._id},"CODEswip#45")
+   return jwtToken
+}
+
 
 const userModel = mongoose.model("User", userSchema);
 
