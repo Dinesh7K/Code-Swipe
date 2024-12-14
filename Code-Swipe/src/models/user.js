@@ -9,6 +9,7 @@ const userSchema = new mongoose.Schema(
       required: true,
       minLength: 1,
       maxlength: 30,
+      index:true,
       validate(value) {
         if (!validator.isAlpha(value)) {
           throw new Error("Invaid First Name");
@@ -18,6 +19,7 @@ const userSchema = new mongoose.Schema(
     lastName: {
       type: String,
       required: true,
+      index:true,
       minLength: 1,
       maxlength: 30,
       validate(value) {
@@ -97,9 +99,12 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-userSchema.methods.setHashPassword=async function(){
-   this.password= await bcrypt.hash(this.password,15) 
-}
+userSchema.pre('save',async function(next){
+  this.password=await bcrypt.hash(this.password,15)
+  next()
+})
+
+userSchema.indexes({'firstName':1,'lastname':1})
 
 userSchema.methods.validateHashPassword=async function(passwordInput){
   const isValid=await bcrypt.compare(passwordInput,this.password)

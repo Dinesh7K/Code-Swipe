@@ -8,7 +8,7 @@ profileRoute.get("/profile/view", loginAuth, async (req, res) => {
   const user = await User.findById({ _id: req.userId });
   res.status(200).json({ profileDetails: user });
 });
-profileRoute.post("/profile/edit", loginAuth, async (req, res) => {
+profileRoute.patch("/profile/edit", loginAuth, async (req, res) => {
   const editOptions = [
     "firstName",
     "lastName",
@@ -36,7 +36,7 @@ profileRoute.post("/profile/edit", loginAuth, async (req, res) => {
       runValidators: true,
     });
 
-    user.save();
+    await user.save();
     res.status(202).send({ profileDetails: user });
   } catch (err) {
     res.status(400).send(err.message);
@@ -62,7 +62,7 @@ profileRoute.post("/profile/password", loginAuth, async (req, res) => {
         returnDocument: "after",
         runValidators: true,
       });
-    await user.setHashPassword()
+   
     user.save();
     res.cookie("token", null, { expires: new Date(Date.now()) });
     res.status(202).send("Password has been updated");

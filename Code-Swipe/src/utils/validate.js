@@ -18,5 +18,14 @@ const validateToken=(token)=>{
    const isValid=jwt.verify(token,"CODEswip#45")
    return isValid
 }
+const validatesendConnection=(status)=>{
+    const allowedStatus=["connect","ignore"]
+    if(allowedStatus.includes(status)){
+      return true
+    }
+    else{
+      return false
+    }
+}
 
-module.exports= {validateAge,validateToken}
+module.exports= {validateAge,validateToken,validatesendConnection}
