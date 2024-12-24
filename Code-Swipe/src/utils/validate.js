@@ -27,5 +27,15 @@ const validatesendConnection=(status)=>{
       return false
     }
 }
+const validaterecieveConnection=(status)=>{
+  const allowedStatus=["accept","reject"]
+  if(allowedStatus.includes(status)){
+    return true
+  }
+  else{
+    return false
+  }
 
-module.exports= {validateAge,validateToken,validatesendConnection}
+}
+
+module.exports= {validateAge,validateToken,validatesendConnection,validaterecieveConnection}

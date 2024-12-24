@@ -12,6 +12,8 @@ const loginAuth=async(req,res,next)=>{
       throw new Error("Invalid Token")
     }
     const {_id}=validateToken(token)   
+  
+
     req.userId=_id
     next()
   }

@@ -4,17 +4,19 @@ const requestConnectionSchema = new mongoose.Schema(
   {
     fromUserid: {
       type: mongoose.Schema.Types.ObjectId,
+      ref:"User",
       required: true,
     },
-    ToUserid: {
+    toUserid: {
       type: mongoose.Schema.Types.ObjectId,
+      ref:"User",
       required: true,
     },
     status: {
       type: String,
       required: true,
       enum: {
-        values: ["connect", "ignore"],
+        values: ["connect", "ignore","accept","reject"],
         message: "{VALUE} is not allowed",
       },
     },

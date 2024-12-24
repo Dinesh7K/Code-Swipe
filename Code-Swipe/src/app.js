@@ -3,7 +3,8 @@ const connectDB = require("./config/database");
 const cookieparser=require('cookie-parser')
 const {userRoute}=require('./routes/user')
 const {profileRoute}=require('./routes/profile')
-const {requestRoute}=require('./routes/request')
+const {requestRoute,connectionRoute}=require('./routes/request')
+const {exploreRoute}=require('./routes/explore')
 const app = express();
 
 app.use(express.json());
@@ -12,6 +13,8 @@ app.use(cookieparser())
 app.use("/",userRoute)
 app.use("/",profileRoute)
 app.use("/",requestRoute)
+app.use("/",connectionRoute)
+app.use("/",exploreRoute)
 
 
 
